@@ -21,7 +21,7 @@ p = subprocess.Popen(['java',
                       'target/amazon-kinesis-video-streams-parser-library-1.0.5-SNAPSHOT.jar',
                       'com.amazonaws.kinesisvideo.parser.examples.SocketImageProviderExample',
                       '2009', # port
-                      'josvijay-demo-android', # stream name
+                      'josvijay-python-parser-1', # stream name !!!! if exists it will be deleted and recreated !!!!!!
                       'us-west-2', # region
                       ]
                      )
@@ -36,10 +36,11 @@ while(True):
     image_data += data.decode(encoding='UTF-8')
     if "\n" in image_data:
       data = image_data.split("\n")
+      image_data = data[1]
+      data = data[0].split("$")
       tempBuff = StringIO.StringIO()
       tempBuff.write(data[0].decode('base64'))
       tempBuff.seek(0) #need to jump back to the beginning before handing it off to PIL
       image = Image.open(tempBuff)
       image.show()
-      image.close()
-      image_data = data[1]
+      print "timecode : " + data[1].decode('base64') + " " + data[2].decode('base64')

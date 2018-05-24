@@ -54,7 +54,7 @@ public class H264FrameReader implements FrameVisitor.FrameProcessor {
     @Override
     public void process(Frame frame, MkvTrackMetadata trackMetadata, Optional<FragmentMetadata> fragmentMetadata) {
         final BufferedImage bufferedImage = decodeH264Frame(frame, trackMetadata);
-        kinesisVideoFrameViewer.update(bufferedImage);
+        kinesisVideoFrameViewer.update(bufferedImage, frame, fragmentMetadata, trackMetadata);
     }
 
     protected BufferedImage decodeH264Frame(Frame frame, MkvTrackMetadata trackMetadata) {

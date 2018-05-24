@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and limitations 
 */
 package com.amazonaws.kinesisvideo.parser.utilities;
 
+import com.amazonaws.kinesisvideo.parser.mkv.Frame;
 import com.amazonaws.util.Base64;
 
 import javax.imageio.ImageIO;
@@ -20,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Optional;
 
 public class SocketFrameWriter {
     final OutputStream outputStream;
@@ -28,12 +30,19 @@ public class SocketFrameWriter {
         this.outputStream = outputStream;
     }
 
-    public void update(BufferedImage image) {
+    public void update(final BufferedImage image,
+                       final Frame frame,
+                       final Optional<FragmentMetadata> fragmentMetadata,
+                       final MkvTrackMetadata trackMetadata) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", baos );
             baos.flush();
             outputStream.write(Base64.encode(baos.toByteArray()));
+            outputStream.write("$".getBytes());
+            outputStream.write(Base64.encode(Integer.toString(frame.getTimeCode()).getBytes()));
+            outputStream.write("$".getBytes());
+            outputStream.write(Base64.encode(fragmentMetadata.get().toString().getBytes()));
             outputStream.write("\n".getBytes());
             outputStream.flush();
         } catch (IOException e) {
